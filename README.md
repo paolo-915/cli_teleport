@@ -6,11 +6,15 @@ A command line tool to bookmark directories and easily navigate through them. Wo
 The basic commands are:
 
 `s1`  -> saves current directory as bookmark #1
+
 `s2`  -> saves current directory as bookmark #2
+
 ...etc.
 
 `p1`  -> goes to directory #1
+
 `p2`  -> goes to directory #2
+
 ...etc.
 
 `lt`  -> lists all bookmarks saved
@@ -18,6 +22,7 @@ The basic commands are:
 The bookmarks are also saved as environment variables: 
 - `$p1` contains the path to directory #1
 - `$p2` contains the path to directory #2
+
 ...etc.
 
 This means that the command `p1` is functionally equivalent to `cd $p1`.
@@ -67,12 +72,12 @@ Since the most useful commands are those to list, save and go to a path, aliases
 
  |  alias  |  Target command  |
  |---------|------------------|
- |   lt    |   tp --list      |
- |   s1    |   tp --save . 1  |
- |   s2    |   tp --save . 2  |
+ |  `lt`   |  `tp --list`     |
+ |  `s1`   |  `tp --save . 1` |
+ |  `s2`   |  `tp --save . 2` |
  |   ...   |   ...            |
- |   p1    |   tp --pathgo 1  |
- |   p2    |   tp --pathgo 2  |
+ |  `p1`   |  `tp --pathgo 1` |
+ |  `p2`   |  `tp --pathgo 2` |
  |   ...   |   ...            |
 
 
