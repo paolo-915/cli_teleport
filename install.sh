@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# --- Custom APP name and folder ---
-# --- (You can modify these two variables before installing) ---
-APP_NAME="cli_teleport"
-APP_DIR="$HOME/.local/share/$APP_NAME"
+# --- Custom folder ---
+# --- (You can modify APP_DIR before installing) ---
+APP_DIR="$HOME/.local/share/cli_teleport"
 
 
 # ANSI Color codes
@@ -63,33 +62,31 @@ configure_shell() {
 
     # Check if the export lines are already inside the config file to avoid duplicate appends
     if grep -qs "source ${APP_DIR}/env_cli_teleport.sh" "$shell_config"; then
-        info "${APP_NAME} already configured in $shell_config".
+        info "cli_teleport already configured in $shell_config".
     else
-        echo "" >> "$shell_config"
-        echo "# Added by $APP_NAME installer: sourcing the environment" >> "$shell_config"
+        echo "# Added by cli_teleport installer: sourcing the environment" >> "$shell_config"
         echo "[[ \"-s ${APP_DIR}/env_cli_teleport.sh\" ]] && source ${APP_DIR}/env_cli_teleport.sh" >> "$shell_config"
 
-        info "Appended 'source $APP_DIR/env_env_cli_teleport.sh' to $shell_config"
-        warn "Run 'source $shell_config' or restart your terminal to update your PATH."
+        info "Appended 'source $APP_DIR/env_cli_teleport.sh' to $shell_config"
+        warn "Run 'source $shell_config' or restart your terminal."
     fi
 
 }
 
 # --- Uninstaller Flag ---
 if [[ "${1:-}" == "--uninstall" || "${1:-}" == "-u" ]]; then
-    info "Removing $APP_NAME..."
+    info "Removing cli_teleport..."
     get_shell_info
     if [[ -z "$shell_config" ]]; then
         warn "Could not automatically detect your shell config file."
         echo "Please manually delete the following from your shell configuration:"
         echo -e "  ${GREEN}source ${APP_DIR}/env_cli_teleport.sh${NC}"
     else
-		sed "/# Added by $APP_NAME installer/d" $shell_config > my_shell_config.tmp && mv my_shell_config.tmp $shell_config 
-		sed "/env_cli_teleport.sh/d" $shell_config > my_shell_config.tmp && mv my_shell_config.tmp $shell_config 
+		sed -e "/# Added by cli_teleport installer/d" -e "/env_cli_teleport.sh/d" "$shell_config" > my_shell_config.tmp && mv my_shell_config.tmp "$shell_config"
     fi
     warn "The following folder will be deleted: $APP_DIR"
     rm -rI "$APP_DIR"
-    info "$APP_NAME successfully uninstalled."
+    info "cli_teleport successfully uninstalled."
     exit 0
 fi
 
@@ -98,24 +95,20 @@ command -v python3 >/dev/null 2>&1 || error "Python 3 is required but was not fo
 command -v bash >/dev/null 2>&1 || error "Bash is required but was not found."
 
 # --- 2. Directory Creation ---
-info "Installing $APP_NAME..."
+info "Installing cli_teleport..."
 echo ""
 mkdir -p "$APP_DIR"
 
 # --- 3. Copy Package Source Files ---
-NEW_LINE1=$(sed -n '/APP_NAME=\"/p' install.sh)
-NEW_LINE2=$(sed -n '/APP_DIR=\"/p' install.sh)
-export NEW_LINE1
-export NEW_LINE2
-awk -v var1="$NEW_LINE1" -v var2="$NEW_LINE2" ' { 
-  sub(/        APP_NAME =.*$/, "        " var1 ) 
-  sub(/        APP_DIR =.*$/, "        " var2 )
+NEW_LINE=$(sed -n '/APP_DIR=\"/p' install.sh)
+export NEW_LINE
+awk -v var="$NEW_LINE" ' { 
+  sub(/        APP_DIR =.*$/, "        " var )
   print
 } ' cli_teleport.py > cli_tempfile1.py.tmp
 
-awk -v var1="$NEW_LINE1" -v var2="$NEW_LINE2" ' { 
-  sub(/  local APP_NAME=.*$/, "  local " var1 ) 
-  sub(/  local APP_DIR=.*$/, "  local " var2 )
+awk -v var="$NEW_LINE" ' { 
+  sub(/  local APP_DIR=.*$/, "  local " var )
   print
 } ' env_cli_teleport.sh > cli_tempfile2.sh.tmp
 
