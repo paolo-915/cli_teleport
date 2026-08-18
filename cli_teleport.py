@@ -9,9 +9,8 @@ class teleporter:
 
     def __init__( self ):
 
-        # --- Custom APP name and folder ---
-        APP_NAME = "cli_teleport"
-        APP_DIR = "$HOME/.local/share/$APP_NAME"
+        # --- Custom folder ---
+        APP_DIR = "$HOME/.local/share/cli_teleport"
 
         path_data_dir = Path(os.path.expandvars(APP_DIR))
         self.shortcuts_file = path_data_dir / "cli_teleport_list"
@@ -73,15 +72,15 @@ class teleporter:
     #./cli_teleport.py --help
     def print_help( self ):
         print()
-        print("usage: cli_teleport.py [option] [argument(s)]")
+        print("Usage: cli_teleport.py [option] [argument(s)]")
         print("Options and arguments:")
-        print("-h, --help                                Show this message and quit.")
-        print("-l, --list                                Show the paths saved and their corresponding indices.")
-        print("-s [Path] [index], --save [Path] [index]  Save the [Path] and bookmark it with [index].")
-        print("-d [index], --delete [index]              Delete the [Path] corresponding to [index].")
-        print("-p [index], --print [index]               Print to stdout the [Path] correponding to [index].")
-        print("-D, --deleteall                           Delete all paths previously saved.")
-        print("-c, --clean                               Delete paths to locations that no longer exist.")
+        print("-h, --help                     Show this message and quit")
+        print("-l, --list                     Show the paths saved and their corresponding indices")
+        print("-s, --save [path] [index]      Save the [path] and bookmark it with [index]")
+        print("-p, --print <index>            Print to stdout the path correponding to <index>")
+        print("-d, --delete <index>           Delete the path corresponding to <index>")
+        print("-D, --deleteall                Delete all paths previously saved")
+        print("-c, --clean                    Delete paths to directories that no longer exist")
         print()
 
 

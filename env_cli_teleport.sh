@@ -1,21 +1,21 @@
 #!/usr/bin/bash
 
-teleport()
+tp()
 {
-  # --- Custom APP name and folder ---
-  local APP_NAME="cli_teleport"
-  local APP_DIR="$HOME/.local/share/$APP_NAME"
+  # --- Custom folder ---
+  local APP_DIR="$HOME/.local/share/cli_teleport"
+  local list_length=30
 
   if [ -z "$1" ]; then
     # display usage and exit when no args
     echo "No arguments given."
-    $APP_DIR/cli_teleport.py -h | sed "s/cli_teleport.py/teleport/" | sed 's/print/pathgo/' | sed 's/ Print to stdout/Go to/'
+    $APP_DIR/cli_teleport.py -h | sed "s/cli_teleport.py/tp/" | sed 's/print/pathgo/' | sed 's/ Print to stdout/Go to/'
     return
   fi
 
   case "$1" in
     -h|--help)
-      $APP_DIR/cli_teleport.py -h | sed "s/cli_teleport.py/teleport/" | sed 's/print/pathgo/' | sed 's/ Print to stdout/Go to/'
+      $APP_DIR/cli_teleport.py -h | sed "s/cli_teleport.py/tp/" | sed 's/print/pathgo/' | sed 's/ Print to stdout/Go to/'
       ;;
     -l|--list)
       $APP_DIR/cli_teleport.py -l
@@ -27,7 +27,7 @@ teleport()
       ;;
     -S|--save_with_index)
       if [ -z "$2" ]; then
-          echo "Index missing. teleport -S [index]"
+          echo "Index missing. tp -S [index]"
           return
       else
         $APP_DIR/cli_teleport.py -s "$(pwd)" "$2"
@@ -37,7 +37,7 @@ teleport()
       ;;
     -d|--delete) 
       if [ -z "$2" ]; then
-          echo "Index missing. teleport -d [index]"
+          echo "Index missing. tp -d [index]"
           return
       else
       $APP_DIR/cli_teleport.py -d "$2"
@@ -47,7 +47,7 @@ teleport()
       ;;
     -p|--pathgo) 
       if [ -z "$2" ]; then
-          echo "Index missing. teleport -p [index]"
+          echo "Index missing. tp -p [index]"
           return
       else
         cd "$($APP_DIR/cli_teleport.py -p $2)"
@@ -57,9 +57,19 @@ teleport()
       ;;
     -D|--deleteall) 
       $APP_DIR/cli_teleport.py -D
+      for VAR in {1..$list_length}
+      do
+          local mycommand="unset p$VAR"
+          eval $mycommand
+      done
       ;;
     -c|--clean) 
       $APP_DIR/cli_teleport.py -c
+      for VAR in {1..$list_length}
+      do
+          local mycommand="unset p$VAR"
+          eval $mycommand
+      done
       local mycommand="$($APP_DIR/cli_teleport.py -e)"
       eval $mycommand
       ;;
@@ -68,7 +78,7 @@ teleport()
       ;;
     *)
       echo "Invalid arguments."
-      $APP_DIR/cli_teleport.py -h | sed "s/cli_teleport.py/teleport/" | sed 's/print/pathgo/' | sed 's/ Print to stdout/Go to/'
+      $APP_DIR/cli_teleport.py -h | sed "s/cli_teleport.py/tp/" | sed 's/print/pathgo/' | sed 's/ Print to stdout/Go to/'
       ;;
   esac
   return $?
@@ -76,30 +86,30 @@ teleport()
 
 
 # Now defining the aliases:
-# lt -> list the shortcuts saved
-# s1 -> save the path of the current directory at index 1 in the list
-# s2 -> save the path of the current directory at index 2 in the list
+# lt -> list the paths saved
+# s1 -> save the path of the current directory as bookmark #1
+# s2 -> save the path of the current directory as bookmark #2
 # ...
-# p1 -> go to the path stored at index 1
-# p2 -> go to the path stored at index 2
+# p1 -> go to the path corresponding to bookmark #1
+# p2 -> go to the path corresponding to bookmark #2
 # ...
 
-alias lt="teleport -l"
+alias lt="tp -l"
 
 for VAR in {1..30}
 do
-    command1="alias s$VAR=\"teleport -S $VAR\""
-    command2="alias p$VAR=\"teleport -p $VAR\""
+    command1="alias s$VAR=\"tp -S $VAR\""
+    command2="alias p$VAR=\"tp -p $VAR\""
     eval $command1
     eval $command2
 done
 
 
-# Now exporting the paths as Bash variables also. Examples:
-# echo $p1          -> prints the path stored at index 1
-# cp myfile.txt $p2 -> copies myfile.txt into the path stored at index 2
+# Now exporting the paths as environment variables also. Examples:
+# echo $p1          -> prints the path saved as bookmark #1
+# cp myfile.txt $p2 -> copies myfile.txt into the path saved as bookmark #2
 
-mycommand="$(teleport -e)" 
+mycommand="$(tp -e)" 
 eval $mycommand
 
 
